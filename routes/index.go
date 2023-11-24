@@ -8,7 +8,8 @@ func Index() {
 
 	router := gin.Default()
 	UserRoutes(router)
+
 	authRoute(router)
 
-	router.Run(":8000")
+	router.Run(":3000")
 }

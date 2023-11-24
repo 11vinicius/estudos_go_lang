@@ -1,5 +1,13 @@
 version: '3'
 services:
+  api: 
+      build: .
+      ports:
+        - 3000:3000
+      volumes:
+        - .:/usr/src/app
+      command: air main.go -b 0.0.0.0
+
   postgres:
     image: "postgres"
     environment:
@@ -11,12 +19,3 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data  
 
-  pgadmin-compose:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "root@root.com"
-      PGADMIN_DEFAULT_PASSWORD: "123"
-    ports:
-      - "54321:80"
-    depends_on:
-      - postgres

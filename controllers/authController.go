@@ -3,10 +3,12 @@ package controllers
 import (
 	"boilerplate/initializers"
 	"boilerplate/models"
+	"boilerplate/utils"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type LoginInput struct {
@@ -29,19 +31,23 @@ func Login(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
+
+	err = utils.VerifyPassword(input.Password, user.Password)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "email e/ou senha inválida"})
+		return
+
+	}
+	token, err := createToken(user)
+
+	ctx.JSON(http.StatusOK, gin.H{"token": token})
 }
 
-func verify(password, passwordHashed string) error {
-	return bcrypt.CompareHashAndPassword([]byte(passwordHashed), []byte(password))
+func createToken(user models.Users) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userId": user.Id,
+		"nbf":    time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
+	})
+	return token.SignedString([]byte("hmacSampleSecret"))
 }
-
-// func createToken(user models.Users) (string, error) {
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-// 		"userId": user.Id,
-// 		"nbf":    time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
-// 	})
-
-// 	// tokenString, err := token.SignedString(hmacSampleSecret)
-// 	fmt.Println(tokenString, err)
-
-// }

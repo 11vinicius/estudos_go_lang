@@ -8,7 +8,8 @@ import (
 
 func UserRoutes(route *gin.Engine) {
 	user := route.Group("/user")
+
 	user.POST("/", controllers.UserCreate)
-	user.GET("/", controllers.Users)
+	user.GET("/", AuthMiddleware(), controllers.Users)
 	user.GET("/:email", controllers.FindUserWhereEmail)
 }

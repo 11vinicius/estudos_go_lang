@@ -7,10 +7,10 @@ import (
 )
 
 func Index() {
-
 	router := gin.Default()
-	UserRoutes(router)
+
 	authRoute(router)
+	UserRoutes(router)
 
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"run": "server is running"})

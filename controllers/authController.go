@@ -5,6 +5,7 @@ import (
 	"boilerplate/models"
 	"boilerplate/utils"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -45,9 +46,10 @@ func Login(ctx *gin.Context) {
 }
 
 func createToken(user models.Users) (string, error) {
+	secret := os.Getenv("JWT_SECRET")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"userId": user.Id,
 		"nbf":    time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
 	})
-	return token.SignedString([]byte("hmacSampleSecret"))
+	return token.SignedString([]byte(secret))
 }
